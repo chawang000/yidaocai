@@ -70,7 +70,7 @@
 			);
 			$res = https_post($url, $bodys);
 			$dish_name = json_decode($res)->result[0]->name;
-			echo $dish_name;//最高可能性菜名，＊＊＊＊应改为可手动选择
+			// echo $dish_name;//最高可能性菜名，＊＊＊＊应改为可手动选择
 			// var_dump($res);//baidu AI finished
 
 
@@ -78,29 +78,41 @@
 
 			//配置您申请的appkey
 			$appkey = "246b72a3a96733d21f64d25502e85d16";
-
-			//************1.菜谱大全************
 			$url = "http://apis.juhe.cn/cook/query.php";
-			$params = array(
+			$index = 0;
+			while($index < 5){
+				$dish_name = json_decode($res)->result[$index]->name;
+				$index += 1;
+				echo $dish_name;
+				$params = array(
 			      "menu" => $dish_name,//需要查询的菜谱名
 			      "key" => $appkey,//应用APPKEY(应用详细页查询)
 			      "dtype" => "",//返回数据的格式,xml或json，默认json
 			      "pn" => "",//数据返回起始下标
 			      "rn" => "1",//数据返回条数，最大30
 			      "albums" => "",//albums字段类型，1字符串，默认数组
-			);
-			$paramstring = http_build_query($params);
-			$content = juhecurl($url,$paramstring);
-			$result = json_decode($content,true);
-			if($result){
-			    if($result['error_code']=='0'){
-			        echo json_decode($content)->result->data[0]->ingredients;
-			    }else{
-			        echo $result['error_code'].":".$result['reason'];
-			    }
-			}else{
-			    echo "请求失败";
+				);
+				$paramstring = http_build_query($params);
+				$content = juhecurl($url,$paramstring);
+				$result = json_decode($content,true);
+				if($result){
+				    if($result['error_code']=='0'){
+				        echo json_decode($content)->result->data[0]->ingredients;
+				    }else{
+				        echo $result['error_code'].":".$result['reason'];
+				    }
+				}else{
+				    echo "请求失败";
+				}
 			}
+
+
+			
+			
+
+			//************1.菜谱大全************
+			
+			
 
 			function juhecurl($url,$params=false,$ispost=0){
 			    $httpInfo = array();
