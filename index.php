@@ -61,7 +61,7 @@
 		    $res = request_post($url, $post_data);
 			$token = json_decode($res)->access_token;
 			$url = 'https://aip.baidubce.com/rest/2.0/image-classify/v2/dish?access_token=' . $token;
-			$img = file_get_contents('_img/example_2.jpg');
+			$img = file_get_contents('_img/example_7.jpg');
 			$img = base64_encode($img);
 			$bodys = array(
 			    'image' => $img,
@@ -73,17 +73,12 @@
 			// echo $dish_name;//最高可能性菜名，＊＊＊＊应改为可手动选择
 			// var_dump($res);//baidu AI finished
 
-
-
 			//*************聚合api菜品材料******************
 
 			//配置您申请的appkey
 			$appkey = "246b72a3a96733d21f64d25502e85d16";
 			$url = "http://apis.juhe.cn/cook/query.php";
-			$index = 0;
-			while($index < 5){
-				$dish_name = json_decode($res)->result[$index]->name;
-				$index += 1;
+				$dish_name = json_decode($res)->result[0]->name;
 				$params = array(
 			      "menu" => $dish_name,//需要查询的菜谱名
 			      "key" => $appkey,//应用APPKEY(应用详细页查询)
@@ -97,40 +92,46 @@
 				$result = json_decode($content,true);
 				if($result){
 				    if($result['error_code']=='0'){
-				    	echo $index . ' : ' . $dish_name;
+				    	// echo $dish_name;
 				        // echo json_decode($content)->result->data[0]->ingredients;
 				        $ingredients = explode(';',json_decode($content)->result->data[0]->ingredients);
-				        $dish_ingredients = array();
+				        $dish_ingredients = array(
+				        	'index' => '',
+				        	'name' => '',
+				        	'weight' => '',
+				        	'othernames' => array()
+				        );//一道菜的配料
+				        $dish_index = 0;
 				        foreach ($ingredients as $ingredient) {
 				        	$ingredient = explode(',',$ingredient);
-				        	$ingredient = $ingredient[0];
-				        	array_push($dish_ingredients, $ingredient);
-				        }
+				        	$dish_ingredients['index'] = $dish_index;
+				        	$dish_index += 1;
+				        	$dish_ingredients['name'] = $ingredient[0];
+				        	$dish_ingredients['weight'] = $ingredient[1];
+				        	
 
-				        print_r ($dish_ingredients);
+				        	// echo 'Index: ' . $dish_ingredients['index'] . ' Name: ' . $dish_ingredients['name']. 'Weight' . $dish_ingredients['weight'];
+							$word = $dish_ingredients['name'];
+							$url = 'http://ebs.ckcest.cn/SynonymWeb/synonymApi';
+							$param = array(
+								'apikey' => 'Ft8p1GOt',
+								'searchEntity' => $word,
+							);
+							$paramstring = http_build_query($param);
+							$content = tongyici($url,$paramstring);
+							echo 'word: ' . $word;
+							// var_dump ($content);
+					        // echo $ingredients;
 
 
-
-						// $word = $ingredients;
-
-						// $url = 'http://ebs.ckcest.cn/SynonymWeb/synonymApi';
-						// $param = array(
-						// 	'apikey' => 'Ft8p1GOt',
-						// 	'searchEntity' => $word,
-						// );
-
-						// $paramstring = http_build_query($param);
-						// $content = tongyici($url,$paramstring);
-						// var_dump($content);
-						// $result = json_decode($content);
-				        // echo $ingredients;
+					  //       array_push($dish_ingredients, $ingredient);
+					    }
 				    }else{
 				        // echo $result['error_code'].":".$result['reason'];
 				    }
 				}else{
 				    echo "请求失败";
 				}
-			}
 
 
 			
