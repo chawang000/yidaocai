@@ -61,7 +61,7 @@
 		    $res = request_post($url, $post_data);
 			$token = json_decode($res)->access_token;
 			$url = 'https://aip.baidubce.com/rest/2.0/image-classify/v2/dish?access_token=' . $token;
-			$img = file_get_contents('_img/example_7.jpg');
+			$img = file_get_contents('_img/example_2.jpg');
 			$img = base64_encode($img);
 			$bodys = array(
 			    'image' => $img,
@@ -108,8 +108,6 @@
 				        	$dish_index += 1;
 				        	$dish_ingredients['name'] = $ingredient[0];
 				        	$dish_ingredients['weight'] = $ingredient[1];
-				        	
-
 				        	// echo 'Index: ' . $dish_ingredients['index'] . ' Name: ' . $dish_ingredients['name']. 'Weight' . $dish_ingredients['weight'];
 							$word = $dish_ingredients['name'];
 							$url = 'http://ebs.ckcest.cn/SynonymWeb/synonymApi';
@@ -119,8 +117,26 @@
 							);
 							$paramstring = http_build_query($param);
 							$content = tongyici($url,$paramstring);
-							echo 'word: ' . $word;
-							// var_dump ($content);
+							// echo 'word: ' . $word;
+							$contentxml = simplexml_load_string($content);
+							$contentjson = json_encode($contentxml);
+							$content = json_decode($contentjson);
+							$Synonyms = $content->Synonyms->Item;
+							if($Synonyms == null || $Synonyms == 'undifiend'){
+								echo "无效值,无同义词";
+							}else{
+								if(is_array($Synonyms)){//多个结果
+									echo "multiple results";
+									foreach ($Synonyms as $value) {
+										print_r($value->Entity);
+									}
+								}else{//单个结果不是array
+									echo "single result";
+									print_r($Synonyms->Entity);
+								}
+							}
+							
+							// print_r($Synonyms);
 					        // echo $ingredients;
 
 
