@@ -116,7 +116,7 @@
 								'searchEntity' => $word,
 							);
 							$paramstring = http_build_query($param);
-							$content = tongyici($url,$paramstring);
+							$content = tongyici_eps($url,$paramstring);
 							// echo 'word: ' . $word;
 							$contentxml = simplexml_load_string($content);
 							$contentjson = json_encode($contentxml);
@@ -203,13 +203,13 @@
 			// );
 
 			// $paramstring = http_build_query($param);
-			// $content = tongyici($url,$paramstring);
+			// $content = tongyici_eps($url,$paramstring);
 			// var_dump($content);
 			// $result = json_decode($content);
 
 			
 
-			function tongyici($url,$params=false,$ispost=0){
+			function tongyici_eps($url,$params=false,$ispost=0){
 			    $httpInfo = array();
 			    $ch = curl_init();
 			 
