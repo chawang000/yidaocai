@@ -28,34 +28,54 @@
 
 
 		$index = 1;
-		$max_index = 1;
+		$max_index = 453;
 		while($index <= $max_index){
+			$updated_sym = 0;
 			$mat_boss = mysqli_query($con,"SELECT * FROM mats_data WHERE id = $index ");
 			$mat = mysqli_fetch_assoc($mat_boss);
 			$mat_other_names = explode(";",$mat["other_names"]);
+			$mat_other_names = array_filter($mat_other_names);
+			// print_r($mat_other_names);
+			$mat_name_filters = explode(";",$mat["name_filter"]);
 			// print_r($mat_other_names);
 
-			// $Synonyms = tongyici_wenzhi($mat["name"]);
-			$Synonyms = ["肥肠","猪肉","大肉","肉末"];
+			$Synonyms = tongyici_wenzhi($mat["name"]);
+			// $Synonyms = ["肥肠","猪肉","大肉","肉末"," ","西瓜 ","a b c","大猪肉"];
 			if($Synonyms){
-				// echo $index . " " . $mat["name"] . ":";
-				// print_r($Synonyms);
 				foreach($Synonyms as $Synonym){
-					if (!in_array($Synonym, $mat_name_list) && !in_array($Synonym, $mat_other_names)){//如果没有在现有数据库的"name"列中
-						echo $Synonym . "已添加到" . $mat["name"] . "别名。";
+					$Synonym = trim($Synonym);
+					$Synonym = preg_replace('/ /', '', $Synonym);//去除所有空格
+					// preg_match_all('/[\x{4e00}-\x{9fff}]+/u', $Synonym, $matches);
+					// $Synonym = join('', $matches[0]);//只提取中文
+					if (!in_array($Synonym, $mat_name_list) && !in_array($Synonym, $mat_other_names) && !in_array($Synonym, $mat_name_filters) && $Synonym){//如果没有在现有数据库的"name",没有存在在"other_names"，也没存在在"name_filter"中
+						array_push($mat_other_names, $Synonym);//push新的别名到现有别名
+						echo $Synonym . "已添加到【" . $mat["name"] . "】";
+						$updated_sym += 1;
 					}else{
-						echo $Synonym . "已经存在。";
+						// echo $Synonym . "已经存在。";
 					}
 				}
+				
+				$othernames_pushlist = implode(";", $mat_other_names);//将更新后的别名转换成mysql表格存储格式
+				// update_othernames($index,$othernames_pushlist);
+				// $sql = "UPDATE mats_data SET other_names='".$othernames_pushlist."' WHERE id = " . $index;
+				// mysqli_query($con,$sql);
+				update_othernames($con,$index, $othernames_pushlist);
 			}
-			
-
 			$index += 1;
 		}
+
+		echo "新添加别名" . $updated_sym . "个。";
 		
 
-		function update_othernames($index, $othernames){
-			mysql_query("UPDATE mats_data SET other_names = $othernames WHERE id = $index");
+
+
+
+
+
+		function update_othernames($con,$index, $othernames){
+			$sql = "UPDATE mats_data SET other_names='".$othernames."' WHERE id = " . $index;
+			mysqli_query($con,$sql);
 		}
 
 
@@ -76,7 +96,7 @@
 			    // echo "Error code:" . $error->getCode() . ".\n";
 			    // echo "message:" . $error->getMessage() . ".\n";
 			    // echo "ext:" . var_export($error->getExt(), true) . ".\n";
-			    return nulll;
+			    return null;
 			} else {
 			    // print ($a["syns"][0]["word_syns"][0]["text"]);
 			    $Synonyms = $a["syns"][0]["word_syns"];
