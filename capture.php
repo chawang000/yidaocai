@@ -1,3 +1,9 @@
+<?php 
+	require('req_globals.php');
+	mysqli_query($con, 'set names utf8');
+
+?>
+
 <html>
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
@@ -10,8 +16,9 @@
 	</head>
 	<body>
 		<input type="file" accept="image/*;" capture="camera" >
+		<input type="file" accept="video/*" capture="camcorder" >
 		<?php 
-			
+
 		?>
     </body>
     
