@@ -27,7 +27,7 @@
 		$updated_sym = 0;
 
 		update_othernames_wenzhi($con,$mat_name_list,1,0);//第二个数值若小于第一个则不会运行
-		update_othernames_ebs($con,$mat_name_list,300,453);//第二个数值若小于第一个则不会运行
+		update_othernames_ebs($con,$mat_name_list,301,350);//第二个数值若小于第一个则不会运行
 		// tongyici_ebs("猪肉");
 		echo "新添加别名" . $updated_sym . "个。";
 
@@ -37,7 +37,7 @@
 		function update_othernames_ebs($con,$mat_name_list,$index,$max_index){
 			$updated_sym = 0;
 			while($index <= $max_index){
-				$mat_boss = mysqli_query($con,"SELECT * FROM mats_data WHERE id = $index ");
+				$mat_boss = mysqli_query($con,"SELECT * FROM food_nutrition WHERE id = $index ");
 				$mat = mysqli_fetch_assoc($mat_boss);
 				$mat_other_names = explode(";",$mat["other_names"]);
 				$mat_other_names = array_filter($mat_other_names);
@@ -64,7 +64,7 @@
 					}
 					
 					$othernames_pushlist = implode(";", $mat_other_names);//将更新后的别名转换成mysql表格存储格式
-					// print_r($othernames_pushlist);
+					// echo ' List: |' . $othernames_pushlist . '| ';
 					update_othernames($con,$index, $othernames_pushlist);
 				}
 				$index += 1;
@@ -74,7 +74,7 @@
 		function update_othernames_wenzhi($con,$mat_name_list,$index,$max_index){
 			$updated_sym = 0;
 			while($index <= $max_index){
-				$mat_boss = mysqli_query($con,"SELECT * FROM mats_data WHERE id = $index ");
+				$mat_boss = mysqli_query($con,"SELECT * FROM food_nutrition WHERE id = $index ");
 				$mat = mysqli_fetch_assoc($mat_boss);
 				$mat_other_names = explode(";",$mat["other_names"]);
 				$mat_other_names = array_filter($mat_other_names);
@@ -99,6 +99,7 @@
 					}
 					
 					$othernames_pushlist = implode(";", $mat_other_names);//将更新后的别名转换成mysql表格存储格式
+					// echo ' List: |' . $othernames_pushlist . '| ';
 					update_othernames($con,$index, $othernames_pushlist);
 				}
 				$index += 1;
@@ -108,17 +109,17 @@
 
 		function get_mat_name($con){
 			$mat_name_list = array();
-			$sql = "SELECT * FROM mats_data";
+			$sql = "SELECT * FROM food_nutrition";
 			$mat_list = mysqli_query($con,$sql);
 			$mat_list_worker = mysqli_fetch_all($mat_list);
 			foreach ($mat_list_worker as $value) {
-				array_push($mat_name_list, $value[1]);
+				array_push($mat_name_list, $value[2]);
 			}
 			return $mat_name_list;
 		}
 
 		function update_othernames($con,$index, $othernames){
-			$sql = "UPDATE mats_data SET other_names='".$othernames."' WHERE id = " . $index;
+			$sql = "UPDATE food_nutrition SET other_names='".$othernames."' WHERE id = " . $index;
 			mysqli_query($con,$sql);
 		}
 
@@ -195,7 +196,6 @@
 				    }
 				}
 			}
-
 		?>
     </body>
     

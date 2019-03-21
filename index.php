@@ -63,6 +63,7 @@
 			$url = 'https://aip.baidubce.com/rest/2.0/image-classify/v2/dish?access_token=' . $token;
 			$img = file_get_contents('_img/example_9.jpg');
 			$img = base64_encode($img);
+			// echo $img;
 			$bodys = array(
 			    'image' => $img,
 			    'sub_lib' => "[appid]",
@@ -70,6 +71,7 @@
 			);
 			$res = https_post($url, $bodys);
 			var_dump($res);
+
 			// $dish_name = json_decode($res)->result[0]->name;
 			// echo $dish_name;//最高可能性菜名，＊＊＊＊应改为可手动选择
 			// var_dump($res);//baidu AI finished
