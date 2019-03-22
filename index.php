@@ -49,8 +49,8 @@
 
 			$url = 'https://aip.baidubce.com/oauth/2.0/token';
 		    $post_data['grant_type']       = 'client_credentials';
-		    $post_data['client_id']      = 'MBMGLqc9So5SnKN4gdw4llj8';
-		    $post_data['client_secret'] = 'jxqE8mcYPaTeNZ1CGuF8KinbsBQC2Obb';
+		    $post_data['client_id']      = 'iS8tPhGxvzAYrDIzzpcCvmyl';
+		    $post_data['client_secret'] = 'l1vn7rFprctTjMjl03VqpfUGd9Bda8pl';
 		    $o = "";
 		    foreach ( $post_data as $k => $v ) 
 		    {
@@ -66,8 +66,8 @@
 			// echo $img;
 			$bodys = array(
 			    'image' => $img,
-			    'sub_lib' => "[appid]",
-			    'brief' => 1
+			    // 'sub_lib' => "[appid]",
+			    // 'brief' => 1
 			);
 			$res = https_post($url, $bodys);
 			var_dump($res);
