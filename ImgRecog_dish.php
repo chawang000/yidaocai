@@ -16,14 +16,14 @@
 	</head>
 	<body>
 		<?php 
-			$img = file_get_contents('_img/example_10.jpg');
+			$img = file_get_contents('_img/example_4.jpg');
 			$img64 = base64_encode($img);
 			// $img64 = $_POST['img64'];
 			// $img64 = str_replace('data:image/jpeg;base64,', '', $img64);
-
+			$baidu_token = '';
 			$dishes = ImgRecog_dish($img64);//通过百度api获取菜品名称
 			// print_r($dishes);
-			$results = get_result($con,$dishes);
+			$results = get_result($con,$dishes,$baidu_token);
 			// $nutrition = get_nutrition($ingredients);
 			// print_r($ingredients);
 			// 先直接和食材数据库对比，如果菜名和食材名吻合，直接从食材数据库提取信息
@@ -66,6 +66,8 @@
 			    
 			    $res = request_post($url, $post_data);
 				$token = json_decode($res)->access_token;
+				global $baidu_token;
+				$baidu_token = $token;
 				$url = 'https://aip.baidubce.com/rest/2.0/image-classify/v2/dish?access_token=' . $token;
 				$bodys = array(
 				    'image' => $img64,
@@ -112,7 +114,7 @@
 				return $dishes;
 		    }
 
-		    function get_result($con,$dishes){
+		    function get_result($con,$dishes,$baidu_token){
 		    	$scores = array_column($dishes,'score');
 		    	$dish_length = sizeof($scores);//
 		    	if($dish_length == 0){
@@ -168,7 +170,51 @@
 					echo "菜品识别直接对比食材库，有结果返回。";
 					return;
 				}else{
-					echo '发送到菜谱库';
+					foreach($selected_dishes as $v){
+						echo '发送到菜谱库';
+						$appkey = 'fe2a7568d9a10323';//你的appkey
+						$num = 20;
+						$keyword = $v['name'];//(utf-8)
+						$url = "http://api.jisuapi.com/recipe/search";
+						$bodys = array(
+							'appkey' => $appkey,
+							'keyword' => $keyword,
+							'num' => $num
+						);
+						$api_dishes = request_post($url, $bodys);
+						if(empty(json_decode($api_dishes)->result)){
+							echo '食谱库没有数据。';
+							return false;
+						}
+						// echo sizeof(json_decode($api_dishes)->result->list);
+						$unique_names = array_column(json_decode($api_dishes)->result->list,'name');
+						$unique_names = array_unique($unique_names);
+						$scored_names = array();
+						// 发送无重复的名字到短文本api查看近似度
+						// echo $baidu_token;
+						$url = 'https://aip.baidubce.com/rpc/2.0/nlp/v2/simnet?access_token=' . $baidu_token;
+						$text_1 = $keyword;
+						echo '【' . $text_1 . '】';
+						foreach($unique_names as $t2){
+							$bodys = array(
+							    'text_1' => $text_1,
+							    'text_2' => $t2,
+							);
+							$bodys = json_encode($bodys);
+							$bodys = iconv("UTF-8","gbk//TRANSLIT",$bodys);
+							$res = request_post($url, $bodys);
+							$res = iconv('GB2312', 'UTF-8',$res);
+							// echo (json_decode($res)->texts->text_2 . ' : ' . json_decode($res)->score . ' | ');
+							$scored_name = array(
+								'name' => json_decode($res)->texts->text_2,
+								'score' => json_decode($res)->score 
+							);
+							array_push($scored_names, $scored_name);
+						}
+						array_multisort(array_column($scored_names, 'score'),SORT_DESC,$scored_names);
+						$highest_score_name = $scored_names[0]['name'];
+						print_r($highest_score_name);
+					}
 				}
 		    }
 
@@ -220,7 +266,7 @@
 							foreach($othernames as $o){
 								if($v == $o){
 									$key = array_keys($ingred_othername_list,$os)[0];
-									echo $key . '从别名识别到了食材';
+									echo $v . '从别名识别到了食材';
 									goto endOthernameLoop;
 								}
 							}
@@ -238,9 +284,7 @@
 					}
 				}
 				// print_r($ingredient_names);
-				
 			}
-
 		?>
     </body>
     
