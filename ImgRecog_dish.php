@@ -16,7 +16,7 @@
 	</head>
 	<body>
 		<?php 
-			$img = file_get_contents('_img/example_4.jpg');
+			$img = file_get_contents('_img/example_1.jpg');
 			$img64 = base64_encode($img);
 			// $img64 = $_POST['img64'];
 			// $img64 = str_replace('data:image/jpeg;base64,', '', $img64);
@@ -27,7 +27,6 @@
 			// $nutrition = get_nutrition($ingredients);
 			// print_r($ingredients);
 			// 先直接和食材数据库对比，如果菜名和食材名吻合，直接从食材数据库提取信息
-
 
 
 
@@ -84,7 +83,7 @@
 					$dish = array();
 					foreach(json_decode($res)->result as $v){
 						$dish_type = $v->root;
-						$varified = strpos($dish_type,'食物') !== false || strpos($dish_type,'植物') !== false || strpos($dish_type,'水果');
+						$varified = strpos($dish_type,'食物') !== false || strpos($dish_type,'植物') !== false || strpos($dish_type,'水果') || strpos($dish_type,'食品')!== false;
 						if($varified) {
 							// echo $dish_type . ' | ';
 							$name = $v->keyword;
@@ -129,9 +128,9 @@
 		    		//如果长度是1，说明是百度通用识别获得的结果
 		    		//通过通用识别的结果（一般不是菜品），所以直接和营养库对比
 		    		$exist = get_nutrition($con,$selected_dishes);
-		    		if($exist){
+		    		if(!empty($exist)){
 		    			echo "通用识别直接对比食材库，有结果返回。";
-		    			print_r($selected_dishes);
+		    			// print_r($selected_dishes);
 		    			return;
 		    			// $res = array(
 		    			// 	'dish' => 
@@ -153,8 +152,6 @@
 				// 		break;//终止循环
 				// 	}
 				// } 
-				
-
 		    	// $test_dishes = array();
 		    	// $text_2 = array('硬五花');
 		    	// foreach($text_2 as $v){
@@ -163,10 +160,9 @@
 		    	// 	);
 		    	// 	array_push($test_dishes, $dish);
 		    	// }
-
 				// 第一步是先和食材库对比，看次菜品是不是就是食材
-				$exist = get_nutrition($con,$selected_dishes);
-				if($exist !== false){
+				$res = get_nutrition($con,$selected_dishes);
+				if(!empty($res)){
 					echo "菜品识别直接对比食材库，有结果返回。";
 					return;
 				}else{
@@ -194,7 +190,7 @@
 						// echo $baidu_token;
 						$url = 'https://aip.baidubce.com/rpc/2.0/nlp/v2/simnet?access_token=' . $baidu_token;
 						$text_1 = $keyword;
-						echo '【' . $text_1 . '】';
+						// echo '【' . $text_1 . '】';
 						foreach($unique_names as $t2){
 							$bodys = array(
 							    'text_1' => $text_1,
@@ -204,7 +200,6 @@
 							$bodys = iconv("UTF-8","gbk//TRANSLIT",$bodys);
 							$res = request_post($url, $bodys);
 							$res = iconv('GB2312', 'UTF-8',$res);
-							// echo (json_decode($res)->texts->text_2 . ' : ' . json_decode($res)->score . ' | ');
 							$scored_name = array(
 								'name' => json_decode($res)->texts->text_2,
 								'score' => json_decode($res)->score 
@@ -213,7 +208,84 @@
 						}
 						array_multisort(array_column($scored_names, 'score'),SORT_DESC,$scored_names);
 						$highest_score_name = $scored_names[0]['name'];
-						print_r($highest_score_name);
+						$api_dishes = json_decode($api_dishes)->result->list;
+
+						// 处理同名菜
+						$same_name_dishes = array();//和最高分菜名同名的所有菜谱
+						foreach($api_dishes as $d){
+							if($d->name == $highest_score_name){
+								$main_ingredients = array();
+								echo '【' . $d->name . '】';
+								// 把所有主料推入到$main_ingredients
+								foreach($d->material as $m){
+									if($m->type == 1){
+										// 查询食材库中此食材的所有别名
+										$m_othernames = get_othernames($con,$m->mname);
+										$ingred_w_othernames = array(
+											'm_name' => $m->mname,
+											'othernames' => $m_othernames
+										);
+										array_push($main_ingredients, $ingred_w_othernames);
+										// print_r($ingred_w_othernames);
+									}
+								}
+								if(empty($main_ingredients)){
+									echo '没有主料。蛋疼了';
+								}
+
+								$same_dish = array(
+									'id' => $d->id,
+									'name' => $d->name,
+									'material' => $main_ingredients,
+								);
+								array_push($same_name_dishes, $same_dish);
+							}
+						}
+						$scores = array();
+						foreach($same_name_dishes as $d){
+							array_push($scores, 0);
+						}
+						$max_i = sizeof($same_name_dishes);
+						for ($i=0; $i < $max_i ; $i++) { 
+							$d1_id = $same_name_dishes[$i]['id'];
+							$materials = $same_name_dishes[$i]['material'];
+							foreach($materials as $m){
+								$m_name = $m['m_name'];
+								foreach($same_name_dishes as $d2){
+									$d2_id = $d2['id'];
+									if($d1_id != $d2_id){
+										// echo $d1_id . ' | ' . $d2_id;
+										$d2m_names = array_column($d2['material'], 'm_name');
+										$o_names = array_column($d2['material'], 'othernames');
+										foreach($o_names as $o_n){
+											if(in_array($m_name, $o_n) || in_array($m_name, $d2m_names)){
+												$scores[$i] += 1;
+											}
+										}
+									}
+									
+								}
+							}
+						}
+						array_multisort($scores,SORT_DESC,$same_name_dishes);
+						$mnames = array_column($same_name_dishes[0]['material'], 'm_name');
+						$ingredients = array();
+						foreach($mnames as $m){
+							$mname = array(
+								'name' => $m
+							);
+							array_push($ingredients, $mname);
+						}
+						$nutrition = get_nutrition($con,$ingredients);
+						// print_r($nutrition);
+						// print_r($same_name_dishes[0]);
+						$final_dish_id = $same_name_dishes[0]['id'];
+						foreach($api_dishes as $d){
+							if($d->id == $final_dish_id){
+								$final_dish = $d;
+								// print_r($final_dish);
+							}
+						}
 					}
 				}
 		    }
@@ -253,7 +325,7 @@
 				// print_r($ingred_name_expand_list);
 				// echo sizeof($ingredients);
 				$ingredient_names = array_column($ingredients,'name');
-				
+				$result = array();
 				foreach($ingredient_names as $v){
 					if($key =  array_search($v, array_column($ingred_name_expand_list,'name'))):;
 					elseif($key =  array_search($v, array_column($ingred_name_expand_list,'name_root'))):;
@@ -275,15 +347,101 @@
 					endif;
 
 					if($key){
-						echo $key;
-						echo ' 食材存在并返回营养，食材名称: '. $ingred_list[$key][2] .' | ';
-						return $ingredient_names;
+						// echo $key;
+						// echo ' 食材存在，食材名称: '. $ingred_list[$key][2] .' | ';
+						$nutri_basic = $ingred_list[$key][5];
+						$nutri_fat = $ingred_list[$key][6];
+						$nutri_mineral = $ingred_list[$key][7];
+						$nutri_vitam = $ingred_list[$key][8];
+						$nutri_amino = $ingred_list[$key][9];
+
+						$nutri_basic = unserialize($nutri_basic);
+						$nutri_fat = unserialize($nutri_fat);
+						$nutri_mineral = unserialize($nutri_mineral);
+						$nutri_vitam = unserialize($nutri_vitam);
+						$nutri_amino = unserialize($nutri_amino);
+						// print_r($nutrition);
+						$ingred_info = array(
+							'id' => $ingred_list[$key][0],
+							'name' => $ingred_list[$key][2],
+							'nutri_basic' => $nutri_basic,
+							'nutri_fat' => $nutri_fat,
+							'nutri_mineral' => $nutri_mineral,
+							'nutri_vitam' => $nutri_vitam,
+							'nutri_amino' => $nutri_amino,
+						);
+						array_push($result, $ingred_info);
+						// return $ingredient_names;
 					}else{
 						echo $v . '食材不存在'. ' | ';
-						return false;
+						// return false;
 					}
 				}
-				// print_r($ingredient_names);
+				print_r($result);
+				return $result;
+			}
+
+			function get_othernames($con,$mname){
+				$ingred_boss = mysqli_query($con,"SELECT * FROM food_nutrition");
+				$ingred_list = mysqli_fetch_all($ingred_boss);
+				$ingred_name_list = array_column($ingred_list, 2);
+				$ingred_othername_list = array_column($ingred_list, 3);
+
+				// echo ($ingred_othername_list[535]);
+				$ingred_name_expand_list = array();//目标数据库的食物扩展名称，名称里含有小括号的将进行扩展
+				foreach ($ingred_list as $value) {
+					$ingred_id = $value[0];
+					$ingred_name = $value[2];
+					if(strstr($ingred_name, '（')){
+						$Pare = array();
+						$preg = '|（(.*)）|U';
+						preg_match_all($preg,$ingred_name,$Pare); 
+						$Pare_c = $Pare[1][0];//括号中的内容
+						$name_root = preg_replace($preg,'',$ingred_name);
+					}else{
+						$Pare_c = '';
+						$name_root = '';
+					}
+						$push_expand_name = array();
+						$push_expand_name = array(
+							'id'=>$ingred_id,
+							'name'=>$ingred_name,
+							'name_root' => $name_root,
+							'name_pare_c' => $Pare_c,
+							'add_infront'=> $Pare_c . $name_root,
+							'add_toback'=> $name_root . $Pare_c,
+						);
+						array_push($ingred_name_expand_list, $push_expand_name);
+				}
+				
+				$keys = array();
+				if($key =  array_search($mname, array_column($ingred_name_expand_list,'name'))):array_push($keys, $key);
+				elseif($key =  array_search($mname, array_column($ingred_name_expand_list,'name_root'))):array_push($keys, $key);
+				elseif($key =  array_search($mname, array_column($ingred_name_expand_list,'name_pare_c'))):array_push($keys, $key);
+				elseif($key =  array_search($mname, array_column($ingred_name_expand_list,'add_infront'))):array_push($keys, $key);
+				elseif($key =  array_search($mname, array_column($ingred_name_expand_list,'add_toback'))):array_push($keys, $key);
+				endif;
+
+				foreach ($ingred_othername_list as $os){
+					$othernames = explode(';', $os);
+					foreach($othernames as $o){
+						if($mname == $o){
+							$key = array_keys($ingred_othername_list,$os)[0];
+							array_push($keys, $key);
+						}
+					}
+				}
+				
+				$keys = array_unique($keys);
+				$unique_othernames = array();
+				foreach($keys as $k){
+					$othernames = explode(';',$ingred_othername_list[$k]);
+					array_push($othernames, $ingred_name_list[$k]);
+					array_filter($othernames);
+					$unique_othernames = array_merge($unique_othernames,$othernames);
+				}
+				$unique_othernames = array_unique($unique_othernames);
+				return $unique_othernames;
 			}
 		?>
     </body>
