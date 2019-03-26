@@ -16,14 +16,12 @@
 	</head>
 	<body>
 		<?php 
-			$appkey = 'fe2a7568d9a10323';//你的appkey
-			$num = 20;
-			$keyword = '白菜';//(utf-8)
+
+			$keyword = '面条';//(utf-8)
 			$url = "http://www.tanghushi.com/tool.php";
 			$bodys = array(
-				'appkey' => $appkey,
-				'keyword' => $keyword,
-				'num' => $num
+				'mod' => 'gi',
+				'fname' => $keyword,
 			);
 
 			$res = request_post($url, $bodys);

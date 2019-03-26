@@ -117,7 +117,7 @@
 		    	$scores = array_column($dishes,'score');
 		    	$dish_length = sizeof($scores);//
 		    	if($dish_length == 0){
-		    		echo "不是食物，返回false";
+		    		// echo "不是食物，返回false";
 		    		return false;//判断不是食物
 		    	}
 		    	array_multisort($scores,SORT_DESC,$dishes);//将最高分菜品放在最前
@@ -129,14 +129,14 @@
 		    		//通过通用识别的结果（一般不是菜品），所以直接和营养库对比
 		    		$exist = get_nutrition($con,$selected_dishes);
 		    		if(!empty($exist)){
-		    			echo "通用识别直接对比食材库，有结果返回。";
+		    			// echo "通用识别直接对比食材库，有结果返回。";
 		    			// print_r($selected_dishes);
 		    			return;
 		    			// $res = array(
 		    			// 	'dish' => 
 		    			// );
 		    		}else{
-		    			echo "没有最终结果";
+		    			// echo "没有最终结果";
 		    			return;
 		    		}
 		    		// return $selected_dishes;

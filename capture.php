@@ -6,7 +6,7 @@
 
 <html>
 <head> 
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8; application/json" /> 
 <meta http-equiv="Content-Language" content="zh-CN" /> 
 <script type="text/javascript" src="_js/jquery-3.3.1.min.js"></script>
 <title>Hello World</title>
@@ -17,6 +17,7 @@
 	</head>
 	<body>
 		<input id="file" type="file" accept="image/*;" >
+		<div id="content"></div>	
 		<script>
 			$(document).ready(function(){
 				document.getElementById('file').addEventListener('change', function() {
@@ -48,14 +49,21 @@
 				        // 上传略
 				        $.ajax({
 				        	type: 'POST',
-				            url:"ImgRecog_dish.php",
-				            // dataType:"json", 
+				            url:"dish_result.php",
+				            dataType:"json", 
 				            data: {
 					        	"img64": dataUrl,
 					        },
 				            success:function(data)
 				            {
-				                alert(data);
+				                var nutrition = data.nutrition;
+				                var content = '';
+				                $.each(nutrition,function(i,val){
+				                	content += val.name;
+				                	console.log(content);
+				                });
+				                alert(content);
+				                $("#content").text(JSON.stringify(nutrition)); 
 				            }
 				        });
 				    }
