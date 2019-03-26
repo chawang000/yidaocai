@@ -56,14 +56,14 @@
 					        },
 				            success:function(data)
 				            {
-				                var nutrition = data.nutrition;
-				                var content = '';
-				                $.each(nutrition,function(i,val){
-				                	content += val.name;
-				                	console.log(content);
-				                });
+				                // var nutrition = data.nutrition;
+				                var content = data.resultcode;
+				                // $.each(nutrition,function(i,val){
+				                // 	content += val.name;
+				                // 	console.log(content);
+				                // });
 				                alert(content);
-				                $("#content").text(JSON.stringify(nutrition)); 
+				                $("#content").text(JSON.stringify(data)); 
 				            }
 				        });
 				    }

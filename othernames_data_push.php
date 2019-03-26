@@ -27,7 +27,7 @@
 		$updated_sym = 0;
 
 		update_othernames_wenzhi($con,$mat_name_list,1,0);//第二个数值若小于第一个则不会运行
-		update_othernames_ebs($con,$mat_name_list,450,0);//第二个数值若小于第一个则不会运行
+		update_othernames_ebs($con,$mat_name_list,601,700);//第二个数值若小于第一个则不会运行
 		// tongyici_ebs("猪肉");
 		echo "新添加别名" . $updated_sym . "个。";
 

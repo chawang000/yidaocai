@@ -103,6 +103,12 @@
     	$dish_length = sizeof($scores);//
     	if($dish_length == 0){
     		// echo "不是食物，返回false";
+    		$json_result = json_encode(array(
+				'resultcode' => 10003,//菜品为通用识别非食物物体，无结果
+				'dish' => '',
+				'nutrition' => ''
+			));
+			echo ($json_result);
     		return false;//判断不是食物
     	}
     	array_multisort($scores,SORT_DESC,$dishes);//将最高分菜品放在最前
@@ -112,16 +118,24 @@
     	if($dish_length == 1){
     		//如果长度是1，说明是百度通用识别获得的结果
     		//通过通用识别的结果（一般不是菜品），所以直接和营养库对比
-    		$exist = get_nutrition($con,$selected_dishes);
-    		if(!empty($exist)){
+    		$res = get_nutrition($con,$selected_dishes);
+    		if(!empty($res)){
     			// echo "通用识别直接对比食材库，有结果返回。";
-    			// print_r($selected_dishes);
+    			$json_result = json_encode(array(
+					'resultcode' => 10001,//菜品为通用识别食物，有结果
+					'dish' => $selected_dishes[0],
+					'nutrition' => $res
+				));
+				echo ($json_result);
     			return;
-    			// $res = array(
-    			// 	'dish' => 
-    			// );
     		}else{
     			// echo "没有最终结果";
+    			$json_result = json_encode(array(
+					'resultcode' => 10002,//菜品为通用识别食物，无结果
+					'dish' => $selected_dishes[0],
+					'nutrition' => ''
+				));
+				echo ($json_result);
     			return;
     		}
     		// return $selected_dishes;
@@ -129,6 +143,12 @@
 
 		$res = get_nutrition($con,$selected_dishes);
 		if(!empty($res)){
+			$json_result = json_encode(array(
+				'resultcode' => 20001,//菜品为图像识别菜名，有结果
+				'dish' => $selected_dishes[0],
+				'nutrition' => $res
+			));
+			echo ($json_result);
 			// echo "菜品识别直接对比食材库，有结果返回。";
 			return;
 		}else{
@@ -220,7 +240,6 @@
 						foreach($same_name_dishes as $d2){
 							$d2_id = $d2['id'];
 							if($d1_id != $d2_id){
-								// echo $d1_id . ' | ' . $d2_id;
 								$d2m_names = array_column($d2['material'], 'm_name');
 								$o_names = array_column($d2['material'], 'othernames');
 								foreach($o_names as $o_n){
@@ -232,7 +251,7 @@
 							
 						}
 					}
-				}
+				}	
 				array_multisort($scores,SORT_DESC,$same_name_dishes);
 				$mnames = array_column($same_name_dishes[0]['material'], 'm_name');
 				$ingredients = array();
@@ -248,12 +267,23 @@
 				$final_dish_id = $same_name_dishes[0]['id'];
 				foreach($api_dishes as $d){
 					if($d->id == $final_dish_id){
-						$final_dish = $d;
-						$json_result = json_encode(array(
-							'dish' => $final_dish,
-							'nutrition' => $nutrition
-						));
-						echo ($json_result);
+						if(!empty($nutrition)){
+							$final_dish = $d;
+							$json_result = json_encode(array(
+								'resultcode' => 30001,//菜谱菜识别有食材信息
+								'dish' => $final_dish,
+								'nutrition' => $nutrition
+							));
+							echo ($json_result);
+						}else{
+							$final_dish = $d;
+							$json_result = json_encode(array(
+								'resultcode' => 30002,//菜谱菜识别无食材信息
+								'dish' => $final_dish,
+								'nutrition' => ''
+							));
+							echo ($json_result);
+						}
 					}
 				}
 			}
