@@ -349,12 +349,12 @@
 			if($key){
 				// echo $key;
 				// echo ' 食材存在，食材名称: '. $ingred_list[$key][2] .' | ';
-				$nutri_basic = $ingred_list[$key][6];
-				$nutri_fat = $ingred_list[$key][7];
-				$nutri_mineral = $ingred_list[$key][8];
-				$nutri_vitam = $ingred_list[$key][9];
-				$nutri_amino = $ingred_list[$key][10];
-				$purine = $ingred_list[$key][11];
+				$nutri_basic = $ingred_list[$key][7];
+				$nutri_fat = $ingred_list[$key][8];
+				$nutri_mineral = $ingred_list[$key][9];
+				$nutri_vitam = $ingred_list[$key][10];
+				$nutri_amino = $ingred_list[$key][11];
+				$purine = $ingred_list[$key][12];
 
 				$nutri_basic = unserialize($nutri_basic);
 				$nutri_fat = unserialize($nutri_fat);

@@ -100,9 +100,6 @@
 		    			$p_name_pare = json_decode($p_name_pare)->data->pinyin;
 		    			$p_full = $p_nameroot . '_' . $p_name_pare;
 		    			$p_full = preg_replace('# #','',$p_full);
-		    			// echo '【';
-		    			// echo $p_full;
-		    			// echo '】';
 			    	}elseif(!empty($fullname)){
 			    		$url = 'http://hn216.api.yesapi.cn/';
 						$bodys = array(
@@ -113,13 +110,8 @@
 						$p_full = request_post($url, $bodys);
 						$p_full = json_decode($p_full)->data->pinyin;
 						$p_full = preg_replace('# #','',$p_full);
-			    		// echo '【';
-			    		// echo $id;
-			    		// echo ' ';
-		    			// echo $p_full;
-		    			// echo '】';
 			    	}
-			    	if($p_full&&empty($name_pinyin)){
+			    	if($p_full&&empty($name_pinyin)&& !empty($fullname)){
 			    		// echo '【';
 			    		// echo $id;
 			    		// echo ' ';
