@@ -27,7 +27,7 @@
 		$updated_sym = 0;
 
 		update_othernames_wenzhi($con,$mat_name_list,1,0);//第二个数值若小于第一个则不会运行
-		update_othernames_ebs($con,$mat_name_list,601,700);//第二个数值若小于第一个则不会运行
+		update_othernames_ebs($con,$mat_name_list,1729,0);//第二个数值若小于第一个则不会运行
 		// tongyici_ebs("猪肉");
 		echo "新添加别名" . $updated_sym . "个。";
 
@@ -53,7 +53,7 @@
 					foreach($Synonyms as $Synonym){
 						// $Synonym = trim($Synonym);
 						$Synonym = preg_replace('/ /', '', $Synonym);//去除所有空格
-						if (!in_array($Synonym, $mat_name_list) && !in_array($Synonym, $mat_other_names) && !in_array($Synonym, $mat_name_filters) && $Synonym){//如果没有在现有数据库的"name",没有存在在"other_names"，也没存在在"name_filter"中
+						if ($Synonym!='没有检索结果' && !in_array($Synonym, $mat_name_list) && !in_array($Synonym, $mat_other_names) && !in_array($Synonym, $mat_name_filters) && $Synonym){//如果没有在现有数据库的"name",没有存在在"other_names"，也没存在在"name_filter"中
 							array_push($mat_other_names, $Synonym);//push新的别名到现有别名
 							echo $Synonym . "已添加到【" . $mat["name"] . "】";
 							global $updated_sym;
