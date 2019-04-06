@@ -84,7 +84,6 @@
 		    		// echo $fullname;
 		    		if(!empty($imgUrl)):goto endImageLoop;endif;//如果数据库有图片直接跳过
 		    		$targetImg = get_webImage($name_pinyin);
-		    		print_r($targetImg);
 					if(!empty($targetImg) && !empty($fullname)){
 						// print_r($targetImg);
 						$patern = '/src\=\'(.*)\' alt/iUs';
@@ -113,11 +112,27 @@
 								$updated_num += 1;
 							}
 						}else{
-							echo '【';
-				    		echo $id;
-				    		echo ' ';
-			    			echo $name_pinyin;
-			    			echo '】没有添加成功。';
+							$pinyin = get_pinyin($fullname);
+							$pinyin = $pinyin . '_junzhi';
+							$targetImg = get_webImage($pinyin);
+							if(!empty($targetImg) && !empty($fullname)){
+								$patern = '/src\=\'(.*)\' alt/iUs';
+								preg_match_all($patern,$targetImg, $ImgUrl);
+								$ImgUrl = $ImgUrl[1][0];
+								saveImage($id,$ImgUrl, '_img/foodpics/');
+								echo '【';
+					    		echo $id;
+					    		echo ' ';
+				    			echo $pinyin;
+				    			echo '】图片添加成功。';
+								$updated_num += 1;
+							}else{
+								echo '【';
+					    		echo $id;
+					    		echo ' ';
+				    			echo $name_pinyin;
+				    			echo '】没有添加成功。';
+							}
 						}
 					}
 
