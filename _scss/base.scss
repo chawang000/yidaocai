@@ -1,1 +1,15 @@
+@font-face{
+			font-family: zihun;     /*自定义的字体名*/
+			src:url('../_fonts/zh24.ttf');   /*引入字体包*/
+}
+
+html,body{
+	padding:0;
+	margin: 0;
+	width: 100%;
+	font-size: 0;
+/*	height: 100%;*/
+}
 @import 'home';
+
+

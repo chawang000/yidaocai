@@ -81,7 +81,6 @@
 	        });//end of AJAX
         }
     }
-
 </script>
 </body>
 </html>
