@@ -5,8 +5,8 @@
 
 	$ingred_boss = mysqli_query($con,"SELECT * FROM food_nutrition");
 	$ingred_list = mysqli_fetch_all($ingred_boss);
-	$ingred_othername_list = array_column($ingred_list, 3);
 	$ingred_name_list = array_column($ingred_list, 2);
+	$ingred_othername_list = array_column($ingred_list, 3);
 
 
 	$search_input = $_POST["searchInput"];

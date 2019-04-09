@@ -17,11 +17,13 @@ h1 {
   margin: 0; }
 
 .fontZihun {
-  font-family: zihun; }
-
-.text_title {
+  font-family: zihun;
+  letter-spacing: -3px;
   font-size: 40px; }
 
+/*.text_title{
+	font-size: 44px;
+}*/
 .text_small {
   font-size: 13px; }
 
@@ -330,14 +332,26 @@ h1 {
 
 .contentLeftWrapper {
   margin-top: -30px;
-  margin-left: -45%;
-  width: 145%;
+  margin-left: -65%;
+  width: 165%;
   border-radius: 50%;
+  box-sizing: border-box;
+  border: 1px solid #eee;
   overflow: hidden;
   height: auto; }
 
+.leftImgWrapper {
+  position: relative;
+  width: 100%;
+  height: 0px;
+  padding-top: 100%; }
+
 .contentLeft img {
-  width: 100%; }
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
 
 .contentRight {
   float: left;
@@ -346,6 +360,7 @@ h1 {
   /*background-color: green;*/ }
 
 .rightInner {
+  margin-top: 10px;
   margin-left: 20px;
   width: -webkit-calc(100% - $contentPadLeft);
   width: -moz-calc(100% - $contentPadLeft);
@@ -353,7 +368,17 @@ h1 {
   /*height: 500px;*/
   /*background-color: pink;*/ }
 
+.rightInner .title_small {
+  color: #777;
+  margin: 0;
+  padding: 0;
+  padding-left: 3px; }
+
 .rightInner h1 {
+  margin: 0;
+  margin-left: -4px;
+  margin-top: -5px;
+  padding: 0;
   color: #000; }
 
 /*#testLen{

@@ -71,12 +71,15 @@
 				<div class="foodSection">
 					<div class="contentLeft">
 						<div class="contentLeftWrapper">
-							<img src="_img/foodpics/d5de4be111ff497daea4d7b2b4e8bde0.jpg" alt="">
+							<div class="leftImgWrapper">
+								<img src="_img/foodpics/40c829216cae4d189d4f89b1a16f0663.jpg" alt="">
+							</div>
 						</div>
 					</div>
 					<div class="contentRight">
 						<div class="rightInner">
-							<h1 class="text_title fontZihun">饼干</h1>
+							<p class="text_small title_small">食材</p>
+							<h1 class="fontZihun">红枣</h1>
 						</div>
 					</div>
 				</div>
