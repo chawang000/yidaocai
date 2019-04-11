@@ -5,6 +5,7 @@
   src: url("../_fonts/zh24.ttf");
   /*引入字体包*/ }
 html, body {
+  -webkit-text-size-adjust: none;
   padding: 0;
   margin: 0;
   width: 100%;
@@ -19,7 +20,7 @@ h1 {
 .fontZihun {
   font-family: zihun;
   letter-spacing: -3px;
-  font-size: 40px; }
+  font-size: 45px; }
 
 /*.text_title{
 	font-size: 44px;
@@ -28,10 +29,24 @@ h1 {
   font-size: 13px; }
 
 .text_regular {
-  font-size: 17px; }
+  font-size: 16px; }
 
+/*.alignLeft{
+	text-align: left;
+}
+
+.alignRight{
+	text-align: right;
+}
+
+.alignMed{
+	text-align: center;
+}*/
 .green {
   color: #2B9E7D !important; }
+
+.red {
+  color: red !important; }
 
 ::-webkit-input-placeholder {
   /* WebKit, Blink, Edge */
@@ -98,18 +113,18 @@ h1 {
   /*background-color: purple;*/ }
 
 #phaseB p {
-  color: #333;
+  color: #222;
   /*position: absolute;*/ }
 
 #searchSection {
   text-align: center;
-  padding-bottom: 30px; }
+  padding-bottom: 20px; }
 
 #searchBox {
   display: inline-block;
   width: 90%;
   height: 50px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 5px; }
 
 #searchTitle {
@@ -157,9 +172,57 @@ h1 {
   /*border: 1px solid red;*/ }
 
 #searchSection form {
+  position: relative;
   /*background-color: red;*/
   padding: 0px;
   margin: 0px; }
+
+#myCursor {
+  position: absolute;
+  opacity: 1;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 20px;
+  margin-top: 15px;
+  margin-left: 20px;
+  background-color: #ffd110;
+  transition: background-color 0.3s;
+  -webkit-transition: background-color 0.3s;
+  /*	-webkit-backface-visibility: hidden; 
+  	-webkit-transform-style: preserve-3d;*/
+  /*	animation: myBlink 3s infinite;
+  	-webkit-animation: myBlink 3s infinite;
+  
+  	@keyframes myBlink {
+  	    0% {
+  	        opacity: 0;
+  	    }
+  		20% {
+  			opacity:100;
+  		}
+  	    60% {
+  	        opacity: 100;
+  	    }
+  	    80% {
+  	    	opacity: 0;
+  	    }
+  	}
+  
+  	@-webkit-keyframes myBlink {
+  	    0% {
+  	        opacity: 0;
+  	    }
+  		20% {
+  			opacity:100;
+  		}
+  	    60% {
+  	        opacity: 100;
+  	    }
+  	    80% {
+  	    	opacity: 0;
+  	    }
+  	}*/ }
 
 #searchSection input {
   margin: 0px;
@@ -202,19 +265,13 @@ h1 {
   height: 40px;
   overflow: hidden; }
 
-/*.pWrapper{
-	height: $searchResult_H;
-	width: 70%;
-	overflow: hidden;
-	float: left;
-}*/
 #searchResult p {
   padding: 0;
   padding-left: 20px;
   padding-top: 9px;
   margin: 0;
   text-align: left;
-  color: #777; }
+  color: #666; }
 
 .rightBox p {
   width: 100%;
@@ -223,7 +280,7 @@ h1 {
   padding-top: 14px;
   margin: 0;
   text-align: center;
-  color: #777; }
+  color: #666; }
 
 .resultImgL {
   width: 26px;
@@ -250,7 +307,7 @@ h1 {
   height: 90px;
   width: 90px;
   border-radius: 90px 0px 0 90px;
-  background-color: #333; }
+  background-color: #777; }
 
 #floaterImg {
   float: left;
@@ -274,7 +331,7 @@ h1 {
 
 #floaterText p {
   display: inline-block;
-  color: #ccc;
+  color: #fff;
   margin: 0;
   margin-top: 16px;
   padding: 0px;
@@ -311,18 +368,28 @@ h1 {
 	border-bottom: 1px solid #eee;
 }*/
 .lowerContentWraper:first-child p {
-  color: #777;
+  color: #666;
   padding: 0;
   padding-top: 2px; }
 
 #content {
   width: 100%;
+  height: auto;
   /*height: 2000px;*/
   /*background-color: #333;*/ }
 
 .foodSection {
   margin-top: 20px;
-  border-top: 1px solid #eee; }
+  border-top: 1px solid #666; }
+  @media screen and (-webkit-min-device-pixel-ratio: 2) {
+    .foodSection {
+      border-top-width: 0.5px; } }
+  @media screen and (-webkit-min-device-pixel-ratio: 3) {
+    .foodSection {
+      border-top-width: 0.333333px; } }
+
+.clear {
+  clear: both; }
 
 .contentLeft {
   float: left;
@@ -331,14 +398,21 @@ h1 {
   /*background-color: purple;*/ }
 
 .contentLeftWrapper {
-  margin-top: -30px;
+  margin-top: -20px;
   margin-left: -65%;
   width: 165%;
   border-radius: 50%;
+  -webkit-border-radius: 50%;
   box-sizing: border-box;
-  border: 1px solid #eee;
+  border: 1px solid #ccc;
   overflow: hidden;
   height: auto; }
+  @media screen and (-webkit-min-device-pixel-ratio: 2) {
+    .contentLeftWrapper {
+      border-top-width: 0.5px; } }
+  @media screen and (-webkit-min-device-pixel-ratio: 3) {
+    .contentLeftWrapper {
+      border-top-width: 0.333333px; } }
 
 .leftImgWrapper {
   position: relative;
@@ -369,7 +443,8 @@ h1 {
   /*background-color: pink;*/ }
 
 .rightInner .title_small {
-  color: #777;
+  /*font-size: 25px;*/
+  color: #ccc;
   margin: 0;
   padding: 0;
   padding-left: 3px; }
@@ -378,13 +453,121 @@ h1 {
   margin: 0;
   margin-left: -4px;
   margin-top: -5px;
+  margin-bottom: 20px;
   padding: 0;
-  color: #000; }
+  color: #222; }
+
+.rightInner h2 {
+  margin: 0;
+  margin-top: 30px;
+  margin-bottom: 6px;
+  padding: 0;
+  font-weight: bold;
+  color: #222; }
+
+#content table {
+  border-collapse: collapse;
+  border-spacing: 0px;
+  width: 100%;
+  border: none;
+  /*background-color: red;*/ }
+
+.units {
+  color: #999;
+  font-weight: normal;
+  font-size: 10px; }
+
+#content th {
+  color: #ccc;
+  font-weight: normal; }
+
+#content td {
+  color: #666;
+  padding: 8px 0 8px 0; }
+
+#content tr {
+  border-bottom: 1px solid #eee; }
+  @media screen and (-webkit-min-device-pixel-ratio: 2) {
+    #content tr {
+      border-bottom: 1px solid #eee; } }
+  @media screen and (-webkit-min-device-pixel-ratio: 3) {
+    #content tr {
+      border-bottom: 0.7px solid #eee; } }
+
+.col_1 {
+  width: 50%;
+  /*padding-right: 5%;*/
+  text-align: left;
+  /*background-color: blue;*/ }
+
+.col_2 {
+  width: 35%;
+  text-align: center;
+  font-weight: bold;
+  /*background-color: green;*/ }
+
+.col_3 {
+  width: 15%;
+  text-align: center;
+  /*background-color: purple;*/ }
+
+.showmore {
+  color: #3989ed;
+  /*font-weight: bold;*/
+  float: left;
+  height: 50px;
+  width: 100%;
+  overflow: hidden;
+  /*background-color: pink;*/
+  text-align: center; }
+
+.showless {
+  color: #3989ed;
+  /*font-weight: bold;*/
+  float: left;
+  margin-top: 0px;
+  height: 0px;
+  width: 100%;
+  overflow: hidden;
+  text-align: center; }
+
+.showless img {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 20px; }
+
+.showless .borderBot {
+  /*	width: 100%;
+  	border-bottom: 1px solid $colorBlue;
+  	@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  	    border-bottom-width: 0.5px;
+  	}
+  	@media screen and (-webkit-min-device-pixel-ratio: 3) {
+  	    border-bottom-width: 0.333333px;
+  	}*/ }
+
+.hiddingtbs {
+  float: left;
+  width: 100%;
+  height: auto;
+  display: none;
+  opacity: 0;
+  /*background-color: purple;*/
+  /*overflow: hidden;*/ }
+
+i {
+  font-size: 50px; }
 
 /*#testLen{
 	width: 23%;
 	height: 50px;
 	background-color: pink;
 }*/
+div.footer {
+  float: left;
+  width: 100%;
+  height: 100px;
+  /*background-color: red;*/ }
 
 /*# sourceMappingURL=base.css.map */
