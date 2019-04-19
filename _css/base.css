@@ -489,10 +489,10 @@ h1 {
   border-bottom: 1px solid #eee; }
   @media screen and (-webkit-min-device-pixel-ratio: 2) {
     #content tr {
-      border-bottom: 1px solid #eee; } }
+      border-bottom-width: 1px; } }
   @media screen and (-webkit-min-device-pixel-ratio: 3) {
     #content tr {
-      border-bottom: 0.7px solid #eee; } }
+      border-bottom-width: 0.7px; } }
 
 .col_1 {
   width: 50%;
